@@ -7,16 +7,16 @@
 
 'use strict';
 
-var hybridExecCmd = require('./index');
+var asyncExecCmd = require('./index');
 
-// git clone git@github.com:tunnckoCore/glob2fp dest
-hybridExecCmd('git clone git@github.com:tunnckoCore/octet', {stdio: 'inherit'}, function(err, res) {
-  console.log('from callback:');
-  console.log(err, res);
-})
-.then(function(res) {
-  console.log('from .then:', res);
-})
-.catch(function(err) {
-  console.log('from .catch:', err);
-})
+// should be tested and should work:
+// asyncExecCmd('npm help', function() {})
+// asyncExecCmd('npm install --save-dev bluebird', function() {})
+// asyncExecCmd('npm ls', {stdio: 'inherit'}, function() {})
+// asyncExecCmd('npm', ['install', 'semver'], function() {})
+// asyncExecCmd('echo', ['hello world'], {stdio: 'inherit'}, function() {})
+// asyncExecCmd('npm i lodash', 'invalid second arg', {stdio: 'inherit'}, function() {})
+// asyncExecCmd('git clone git@github.com:tunnckoCore/glob2fp dest', 'invalid', function() {})
+//
+// should throw `expects callback to be function`
+// asyncExecCmd('git clone git@github.com:tunnckoCore/glob2fp dest', 'invalid')
