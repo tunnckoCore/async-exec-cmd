@@ -7,6 +7,7 @@
 
 'use strict';
 
+var assert = require('assert');
 var asyncExecCmd = require('./index');
 
 // should be tested and should work:
@@ -18,5 +19,12 @@ var asyncExecCmd = require('./index');
 // asyncExecCmd('npm i lodash', 'invalid second arg', {stdio: 'inherit'}, function() {})
 // asyncExecCmd('git clone git@github.com:tunnckoCore/glob2fp dest', 'invalid', function() {})
 //
-// should throw `expects callback to be function`
+// should throw: "should have `callback` and expects to be function":
 // asyncExecCmd('git clone git@github.com:tunnckoCore/glob2fp dest', 'invalid')
+// asyncExecCmd('gitclone tunnckoCore/octet#master', {})
+//
+// should throw "should have at least two arguments":
+// asyncExecCmd('npm i --save-dev mocha')
+//
+// should throw "expect `cmd` be string"
+// asyncExecCmd({})
