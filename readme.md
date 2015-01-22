@@ -19,7 +19,7 @@ npm test
 * `<args>` **{Array|Function}**  
 * `[opts]` **{Object|Function}**  
 * `[callback]` **{Function}**  
-* `returns`: {Stream} spawned child process  
+* `returns` **{Stream}** spawned child process  
 
 **Example:**
 
