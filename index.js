@@ -64,7 +64,9 @@ module.exports = function asyncExecCmd(cmd, args, opts, callback) {
     throw new TypeError('async-exec-cmd: expect `callback` be function');
   }
 
-  //console.log(cmd, args, opts, callback);
+  if (typeOf(args) !== 'array') {
+    throw new TypeError('async-exec-cmd: expect `args` be array');
+  }
 
   var cp = spawn(cmd, args, opts);
   var buffer = new Buffer('');
@@ -128,7 +130,7 @@ function parseCmd(cmds) {
 
   return {
     cmd: cmds.shift(),
-    args: cmds.length ? cmds : ''
+    args: cmds.length ? cmds : []
   };
 }
 
