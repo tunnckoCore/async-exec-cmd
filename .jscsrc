@@ -82,7 +82,6 @@
   "jsDoc": {
     "checkParamNames": true,
     "requireParamTypes": true,
-    "checkRedundantParams": true,
     "checkReturnTypes": true,
     "checkRedundantReturns": true,
     "requireReturnTypes": true,

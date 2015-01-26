@@ -10,57 +10,67 @@
 var assert = require('assert');
 var asyncExecCmd = require('./index');
 
-// should be tested and should work:
-// asyncExecCmd('npm help', function(err, res) {
-//   if (err) return console.log(err);
-//   console.log('npm help');
-// }) //=> work
-// asyncExecCmd('npm install --save-dev bluebird', function(err, res) {
-//   if (err) return console.log('npm install --save-dev bluebird', err);
-//   console.log('npm install --save-dev bluebird');
-// }) //=> work
-// asyncExecCmd('npm -v', {stdio: 'inherit'}, function(err, res) {
-//   if (err) return console.log('npm -v', err);
-//   console.log('npm -v');
-// }) //=> work
-// asyncExecCmd('npm', ['install', 'semver', '--save-dev'], function(err, res) {
-//   if (err) return console.log('npm', ['install', 'semver', '--save-dev'], err);
-//   console.log('npm', ['install', 'semver', '--save-dev']);
-// }) //=> work
-// asyncExecCmd('echo', ['hello world'], {stdio: 'inherit'}, function(err, res) {
-//   if (err) return console.log('echo', ['hello world'], {stdio: 'inherit'}, err);
-//   console.log('echo', ['hello world'], {stdio: 'inherit'});
-// }) //=> work
+function __cb(err, res) {
+  console.log('err:', err);
+  console.log('res:', res);
+}
 
-// asyncExecCmd('git clone git@github.com:tunnckoCore/glob2fp dest', 'invalid', function(err, res) {
-//   if (err) return console.log('git clone git@github.com:tunnckoCore/glob2fp dest', 'invalid', err);
-//   console.log('git clone git@github.com:tunnckoCore/glob2fp dest', 'invalid');
-// })
-
-
-
-// should throw: "expect `args` be array"
-// asyncExecCmd('npm i lodash', 'invalid second arg', {stdio: 'inherit'}, function(err, res) {
-//   if (err) return console.log('err');
-//   console.log('npm i lodash', 'invalid second arg', {stdio: 'inherit'});
-// }) //=> work
-// should throw: "expect `args` be array"
-// asyncExecCmd('npm i lodash', {execp: true}, {stdio: 'inherit'}, function(err, res) {
-//   if (err) return console.log('err');
-//   console.log('npm i lodash', {}, {stdio: 'inherit'});
-// }) //=> work
-// should throw
-// asyncExecCmd('npm i lodash', ['--save-dev'], 'invalid', function(err, res) {
-//   if (err) throw err;
-//   console.log('npm i lodash', {}, 'invalid');
-// }) //=> work
-
-// should throw: "should have `callback` and expects to be function":
-// asyncExecCmd('git clone git@github.com:tunnckoCore/glob2fp dest', 'invalid')
-// asyncExecCmd('gitclone tunnckoCore/octet#master', {})
+// possible problems in hybridified async-exec-cmd:
+// errors will be only in callback
+// it can be solved :)
 //
-// should throw "should have at least two arguments":
-// asyncExecCmd('npm i --save-dev mocha')
+// execCmd({}, function(err, res) {})
+// .then(function(res) {})
+// .catch(function(err) {})
+
+
+// working signatures:
+// cmd, args, opts, cb
+// cmd, opts, cb
+// cmd, args, cb
+// cmd, cb
+
+// throws:
+// asyncExecCmd(__cb)
+//=> should have at least 1 argument - should not be function
+
+// asyncExecCmd({ok:true})
+//=> should have `callback` (non empty callback)
 //
-// should throw "expect `cmd` be string"
-// asyncExecCmd({})
+// asyncExecCmd(['--save-dev', 'bluebird'])
+//=> should have `callback` (non empty callback)
+
+// asyncExecCmd(['--save-dev', 'bluebird'], {ok:true})
+//=> should have `callback` (non empty callback)
+
+// asyncExecCmd({ok:true}, __cb)
+//=> expect `cmd` be string
+
+// asyncExecCmd(['--save-dev', 'bluebird'], __cb)
+//=> expect `cmd` be string
+
+// asyncExecCmd(['--save-dev', 'bluebird'], {ok:true}, __cb)
+//=> expect `cmd` be string
+
+
+// should work:
+// asyncExecCmd('npm', __cb)
+//=> actually npm-cli output friendly output,
+//=> but sends statusCode 1, so he process.exit(1), so if you want to hanle it
+//=> its logical to search it in `err`, not in `res`
+
+// asyncExecCmd('npm', {someFake: 'obj'}, __cb)
+//=> same as above. if set option stdio to 'inherit' it will
+// the friendly output, but still will exit with status code 1,
+// then `err` will be null, `res` will be '' (empty string)
+// because when `stdio: inherit` spawn dont have `data` event,
+// so you cant handle output
+// and Buffer remains as it is initialized
+
+// asyncExecCmd('npm', ['install', '--save-dev', 'bluebird'], __cb)
+// asyncExecCmd('npm', ['install', '--save-dev', 'bluebird'], {stdio: [null, null, null]}, __cb)
+
+// asyncExecCmd('npm -v', __cb)
+// asyncExecCmd('npm install', ['--save-dev', 'bluebird'], __cb)
+// asyncExecCmd('npm install', ['--save-dev', 'bluebird'], {stdio: [null, null, null]}, __cb)
+// asyncExecCmd('npm -v', {stdio: [null, null, null]}, __cb)

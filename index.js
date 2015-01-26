@@ -7,8 +7,16 @@
 
 'use strict';
 
+var isEmptyFunction = require('is-empty-function');
+var handleArguments = require('handle-arguments');
+var handleErrors = require('handle-errors')('async-exec-cmd');
+var extend = require('extend-shallow');
+var unique = require('array-unique');
 var spawn = require('cross-spawn');
 var typeOf = require('kind-of');
+
+var error = handleErrors.error;
+var type = handleErrors.type;
 
 /**
  * Async execute command via spawn
@@ -26,58 +34,65 @@ var typeOf = require('kind-of');
  *
  * @name asyncExecCmd
  * @param  {String}          `<cmd>`
- * @param  {Array|Function}  `<args>`
+ * @param  {Array|Function}  `[args]`
  * @param  {Object|Function} `[opts]`
- * @param  {Function}        `[callback]`
+ * @param  {Function}        `<callback>`
  * @return {Stream}          spawned child process
  * @api public
  */
-module.exports = function asyncExecCmd(cmd, args, opts, callback) {
-  if (!cmd && !args) {
-    throw new Error('async-exec-cmd: should have at least two arguments');
+module.exports = function asyncExecCmd() {
+  var argz = handleArguments(arguments);
+  argz = checkArguments(argz);
+  argz = buildArguments(argz);
+
+  return buildSpawn(argz.cmd, argz.args, argz.opts, argz.callback);
+};
+
+function checkArguments(argz) {
+  if (!argz.args.length) {
+    return error('should have at least 1 argument - should not be function');
   }
 
-  if (typeOf(args) === 'function') {
-    callback = args;
-    opts = {};
-
-    var parse = parseCmd(cmd);
-    cmd = parse.cmd || '';
-    args = parse.args || [];
+  if (isEmptyFunction(argz.cb)) {
+    return error('should have `cb` (non empty callback)');
   }
 
-  if (typeOf(opts) === 'function') {
-    callback = opts;
-    opts = typeOf(args) === 'object' ? args : {};
-
-    var parse = parseCmd(cmd);
-    cmd = parse.cmd || '';
-
-    if (!parse.args.length) {
-      args = args && typeOf(args) === 'array' ? args : [];
-    } else {
-      args = parse.args
-    }
+  if (typeOf(argz.args[0]) !== 'string') {
+    return type('expect `cmd` be string', argz.cb);
   }
 
-  if (!callback || typeOf(callback) !== 'function') {
-    throw new TypeError('async-exec-cmd: expect `callback` be function');
+  if (typeOf(argz.args[1]) === 'object') {
+    argz.args[2] = argz.args[1];
+    argz.args[1] = [];
   }
 
-  if (typeOf(args) !== 'array') {
-    throw new TypeError('async-exec-cmd: expect `args` be array');
-  }
+  return {
+    cmd: argz.args[0],
+    args: argz.args[1],
+    opts: argz.args[2],
+    callback: argz.cb
+  };
+}
 
-  var cp = spawn(cmd, args, opts);
+function buildArguments(argz) {
+  var args = argz.cmd.split(' ');
+  argz.cmd = args.shift();
+  argz.args = unique(argz.args || [], args || []);
+  argz.opts = extend({}, argz.opts || {});
+  return argz;
+}
+
+function buildSpawn(cmd, args, opts, callback) {
+  var proc = spawn(cmd, args, opts);
   var buffer = new Buffer('');
 
-  if (cp.stdout) {
-    cp.stdout.on('data', function indexOnData(data) {
+  if (proc.stdout) {
+    proc.stdout.on('data', function indexOnData(data) {
       buffer = Buffer.concat([buffer, data])
     });
   }
 
-  cp.on('error', function indexOnError(err) {
+  proc.on('error', function indexOnError(err) {
     if (err instanceof Error) {
       callback(new CommandError({
         command: cmd + args.join(' '),
@@ -90,14 +105,13 @@ module.exports = function asyncExecCmd(cmd, args, opts, callback) {
     }
     callback(new CommandError({
       command: cmd + args.join(' '),
-      message: this.command + opts.toString(),
       buffer: buffer,
       status: 1
     }));
     //process.exit(1);
   });
 
-  cp.on('close', function indexOnClose(code) {
+  proc.on('close', function indexOnClose(code) {
     if (!code) {
       callback(null, [code, buffer.toString().trim()]);
       //process.exit(0);
@@ -105,35 +119,14 @@ module.exports = function asyncExecCmd(cmd, args, opts, callback) {
     }
     callback(new CommandError({
       command: cmd + args.join(' '),
-      message: this.command + opts.toString(),
       buffer: buffer,
       status: code
     }));
     //process.exit(code);
   });
 
-  return cp;
-};
-
-/**
- * Parse command to parts
- *
- * @param  {String} `cmds`
- * @return {Object}
- * @api private
- */
-function parseCmd(cmds) {
-  if (typeOf(cmds) !== 'string') {
-    throw new TypeError('async-exec-cmd: expect `cmd` be string');
-  }
-  cmds = cmds.split(' ');
-
-  return {
-    cmd: cmds.shift(),
-    args: cmds.length ? cmds : []
-  };
+  return proc;
 }
-
 
 /**
  * Construct `CommandError`
