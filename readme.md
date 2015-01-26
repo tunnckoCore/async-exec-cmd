@@ -1,10 +1,10 @@
 ## [![npm][npmjs-img]][npmjs-url] [![mit license][license-img]][license-url] [![build status][travis-img]][travis-url] [![coverage status][coveralls-img]][coveralls-url] [![deps status][daviddm-img]][daviddm-url]
 
-> Simple, fast, flexible and cross-platform async executing commands (with child_process spawn)
+> Simple, fast, flexible and cross-platform async executing commands (with [node-cross-spawn][cross-spawn])
 
 ## Install
 ```bash
-npm install async-exec-cmd
+npm i --save async-exec-cmd
 npm test
 ```
 
@@ -12,13 +12,13 @@ npm test
 ## API
 > For more use-cases see the [tests](./test.js)
 
-### [.asyncExecCmd](./index.js#L35)
+### [asyncExecCmd](./index.js#L43)
 > Async execute command via spawn
 
 * `<cmd>` **{String}**  
-* `<args>` **{Array|Function}**  
+* `[args]` **{Array|Function}**  
 * `[opts]` **{Object|Function}**  
-* `[callback]` **{Function}**  
+* `<callback>` **{Function}**  
 * `returns` **{Stream}** spawned child process  
 
 **Example:**
@@ -80,4 +80,6 @@ Released under the [`MIT`][license-url] license.
 
 ***
 
-_Powered and automated by [kdf](https://github.com/tunnckoCore), January 22, 2015_
+_Powered and automated by [kdf](https://github.com/tunnckoCore), January 26, 2015_
+
+[cross-spawn]: https://github.com/IndigoUnited/node-cross-spawn
