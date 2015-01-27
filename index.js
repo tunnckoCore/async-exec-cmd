@@ -23,8 +23,8 @@ var type = handleErrors.type;
  * **Example:**
  *
  * ```js
- * var exec = require('async-exec-cmd');
- * var promise = exec('echo', [
+ * var asyncExecCmd = require('async-exec-cmd');
+ * var promise = asyncExecCmd('echo', [
  *   'hello world'
  * ], function __cb(err, res) {
  *   // as usual
