@@ -26,19 +26,18 @@ and after all passed to [cross-spawn][cross-spawn], which actually is Node's `sp
 
 ```js
 var asyncExecCmd = require('async-exec-cmd');
-var cp = asyncExecCmd('echo', [
-  'hello world'
+var cp = asyncExecCmd('npm install', [
+  '--save-dev', 'bluebird'
 ], function __cb(err, res) {
-  // as usual
-  if (err) {
-    return console.error(err);
+  // res[0] is status code
+  if (err || res[0] > 0) {
+    console.error(err);
+    return;
   }
-  var stdout = res[1];
-  var code = res[0];
-  console.log(stdout, code)
-  //=> code is process exit/close code
-  //=> stdout === 'hello world'
-})
+
+  // res[1] is actual result
+  console.log(res[1]);
+};);
 ```
 
 ### Possible signatures (will work)
