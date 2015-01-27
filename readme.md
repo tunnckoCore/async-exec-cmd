@@ -16,8 +16,8 @@ npm test
 > Async execute command via spawn
 
 * `<cmd>` **{String}**  
-* `[args]` **{Array|Function}**  
-* `[opts]` **{Object|Function}**  
+* `[args]` **{Array}**  
+* `[opts]` **{Object}**  
 * `<callback>` **{Function}**  
 * `returns` **{Stream}** spawned child process  
 
@@ -39,6 +39,64 @@ var cp = exec('echo', [
   //=> stdout === 'hello world'
 })
 ```
+
+### Possible signatures (will work)
+> these examples should work without problems
+
+```js
+var asyncExecCmd = require('async-exec-cmd');
+
+function __cb(err, res) {
+  // res[0] is status code
+  if (err || res[0] > 0) {
+    console.error(err);
+    return;
+  }
+
+  // res[1] is actual result
+  console.log(res[1]);
+}
+
+asyncExecCmd('npm', __cb);
+asyncExecCmd('npm', {someFake: 'options'}, __cb);
+asyncExecCmd('npm', ['install', '--save-dev', 'bluebird'], __cb);
+asyncExecCmd('npm', ['install', '--save-dev', 'bluebird'], {stdio: [null, null, null]}, __cb);
+asyncExecCmd('npm -v', __cb)
+asyncExecCmd('npm install', ['--save-dev', 'bluebird'], __cb);
+asyncExecCmd('npm install', ['--save-dev', 'bluebird'], {stdio: [null, null, null]}, __cb);
+asyncExecCmd('npm -v', {stdio: [null, null, null]}, __cb);
+```
+
+### Impossible signatures (will throws/errors)
+> these examples should not work
+
+```js
+asyncExecCmd(__cb)
+//=> first argument cant be function
+
+asyncExecCmd({ok:true})
+//=> should have `callback` (non empty callback)
+
+asyncExecCmd(['--save-dev', 'bluebird'])
+//=> should have `callback` (non empty callback)
+
+asyncExecCmd(['--save-dev', 'bluebird'], {ok:true})
+//=> should have `callback` (non empty callback)
+
+asyncExecCmd({ok:true}, __cb)
+//=> expect `cmd` be string
+
+asyncExecCmd(['--save-dev', 'bluebird'], __cb)
+//=> expect `cmd` be string
+
+asyncExecCmd(['--save-dev', 'bluebird'], {ok:true}, __cb);
+//=> expect `cmd` be string
+```
+
+actually, this will error.
+npm-cli shows friendly output, but exits with code 1,
+so if you want to handle this output, you should
+search it in `err` object - `err.buffer.toString('utf8')`
 
 
 ## Author

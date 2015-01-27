@@ -10,7 +10,6 @@
 var isEmptyFunction = require('is-empty-function');
 var handleArguments = require('handle-arguments');
 var handleErrors = require('handle-errors')('async-exec-cmd');
-var extend = require('extend-shallow');
 var unique = require('array-unique');
 var spawn = require('cross-spawn');
 var typeOf = require('kind-of');
@@ -33,11 +32,11 @@ var type = handleErrors.type;
  * ```
  *
  * @name asyncExecCmd
- * @param  {String}          `<cmd>`
- * @param  {Array|Function}  `[args]`
- * @param  {Object|Function} `[opts]`
- * @param  {Function}        `<callback>`
- * @return {Stream}          spawned child process
+ * @param  {String} `<cmd>`
+ * @param  {Array}  `[args]`
+ * @param  {Object} `[opts]`
+ * @param  {Function} `<callback>`
+ * @return {Stream} spawned child process
  * @api public
  */
 module.exports = function asyncExecCmd() {
@@ -50,11 +49,11 @@ module.exports = function asyncExecCmd() {
 
 function checkArguments(argz) {
   if (!argz.args.length) {
-    return error('should have at least 1 argument - should not be function');
+    return error('first argument cant be function');
   }
 
   if (isEmptyFunction(argz.cb)) {
-    return error('should have `cb` (non empty callback)');
+    return error('should have `callback` (non empty callback)');
   }
 
   if (typeOf(argz.args[0]) !== 'string') {
@@ -78,7 +77,6 @@ function buildArguments(argz) {
   var args = argz.cmd.split(' ');
   argz.cmd = args.shift();
   argz.args = unique(argz.args || [], args || []);
-  argz.opts = extend({}, argz.opts || {});
   return argz;
 }
 
