@@ -1,6 +1,6 @@
 {
   "name": "async-exec-cmd",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Simple, fast, flexible and cross-platform async executing commands (with node-cross-spawn).",
   "scripts": {
     "lint": "jshint index.js && jscs index.js --reporter inline",
