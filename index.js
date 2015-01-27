@@ -10,7 +10,7 @@
 var isEmptyFunction = require('is-empty-function');
 var handleArguments = require('handle-arguments');
 var handleErrors = require('handle-errors')('async-exec-cmd');
-var unique = require('array-unique');
+var union = require('arr-union');
 var spawn = require('cross-spawn');
 var typeOf = require('kind-of');
 
@@ -95,7 +95,7 @@ function checkArguments(argz) {
 function buildArguments(argz) {
   var args = argz.cmd.split(' ');
   argz.cmd = args.shift();
-  argz.args = unique(argz.args || [], args || []);
+  argz.args = union([], argz.args || [], args || [])
   return argz;
 }
 
