@@ -18,7 +18,8 @@ var error = handleErrors.error;
 var type = handleErrors.type;
 
 /**
- * Async execute command via spawn
+ * > Async execute command via spawn. All arguments are rebuilt, merged, structured, normalized
+ * and after all passed to [cross-spawn][cross-spawn], which actually is Node's `spawn`.
  *
  * **Example:**
  *
@@ -36,7 +37,7 @@ var type = handleErrors.type;
  * @param  {Array}  `[args]`
  * @param  {Object} `[opts]`
  * @param  {Function} `<callback>`
- * @return {Stream} spawned child process
+ * @return {Stream} actually what `child_process.spawn` returns
  * @api public
  */
 module.exports = function asyncExecCmd() {
@@ -47,6 +48,13 @@ module.exports = function asyncExecCmd() {
   return buildSpawn(argz.cmd, argz.args, argz.opts, argz.callback);
 };
 
+/**
+ * > Create flexible arguments - check types.
+ *
+ * @param  {Object} `argz`
+ * @return {Object}
+ * @api private
+ */
 function checkArguments(argz) {
   if (!argz.args.length) {
     return error('first argument cant be function');
@@ -65,6 +73,10 @@ function checkArguments(argz) {
     argz.args[1] = [];
   }
 
+  if (typeOf(argz.args[2]) !== 'object') {
+    argz.args[2] = {};
+  }
+
   return {
     cmd: argz.args[0],
     args: argz.args[1],
@@ -73,6 +85,13 @@ function checkArguments(argz) {
   };
 }
 
+/**
+ * > Build/structure already checked arguments.
+ *
+ * @param  {Object} `argz`
+ * @return {Object}
+ * @api private
+ */
 function buildArguments(argz) {
   var args = argz.cmd.split(' ');
   argz.cmd = args.shift();
@@ -80,6 +99,16 @@ function buildArguments(argz) {
   return argz;
 }
 
+/**
+ * > Handle cross-spawn.
+ *
+ * @param  {String} `cmd`
+ * @param  {Array} `args`
+ * @param  {Object} `opts`
+ * @param  {Function} `callback`
+ * @return {Stream} actually what `child_process.spawn` returns
+ * @api private
+ */
 function buildSpawn(cmd, args, opts, callback) {
   var proc = spawn(cmd, args, opts);
   var buffer = new Buffer('');
@@ -127,7 +156,7 @@ function buildSpawn(cmd, args, opts, callback) {
 }
 
 /**
- * Construct `CommandError`
+ * > Construct `CommandError`.
  *
  * @param {Object} `opts`
  * @api private

@@ -14,13 +14,13 @@ npm test
 
 ### [asyncExecCmd](./index.js#L43)
 > Async execute command via spawn. All arguments are rebuilt, merged, structured, normalized
-and after all passed to [cross-spawn][cross-spawn], which actually is Node's `spawn`
+and after all passed to [cross-spawn][cross-spawn], which actually is Node's `spawn`.
 
 * `<cmd>` **{String}**  
 * `[args]` **{Array}**  
 * `[opts]` **{Object}**  
 * `<callback>` **{Function}**  
-* `returns` **{Stream}** spawned child process  
+* `returns` **{Stream}** actually what `child_process.spawn` returns
 
 **Example:**
 
@@ -72,22 +72,22 @@ cmd('npm -v', {stdio: [null, null, null]}, __cb);
 > these examples should not work
 
 ```js
-cmd(__cb)
+cmd(__cb);
 //=> first argument cant be function
 
-cmd({ok:true})
+cmd({ok:true});
 //=> should have `callback` (non empty callback)
 
-cmd(['--save-dev', 'bluebird'])
+cmd(['--save-dev', 'bluebird']);
 //=> should have `callback` (non empty callback)
 
-cmd(['--save-dev', 'bluebird'], {ok:true})
+cmd(['--save-dev', 'bluebird'], {ok:true});
 //=> should have `callback` (non empty callback)
 
-cmd({ok:true}, __cb)
+cmd({ok:true}, __cb);
 //=> expect `cmd` be string
 
-cmd(['--save-dev', 'bluebird'], __cb)
+cmd(['--save-dev', 'bluebird'], __cb);
 //=> expect `cmd` be string
 
 cmd(['--save-dev', 'bluebird'], {ok:true}, __cb);
