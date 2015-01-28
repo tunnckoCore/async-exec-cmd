@@ -46,9 +46,9 @@
   "dependencies": {
     "arr-union": "^2.0.0",
     "cross-spawn": "^0.2.3",
-    "handle-arguments": "^1.0.4",
+    "handle-arguments": "~2.0.0",
     "handle-errors": "0.0.2",
-    "is-empty-function": "^1.0.0",
+    "is-empty-function": "~1.0.3",
     "kind-of": "^1.0.0"
   },
   "devDependencies": {
