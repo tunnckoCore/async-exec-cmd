@@ -16,11 +16,24 @@ npm test
 > Async execute command via spawn. All arguments are rebuilt, merged, structured, normalized
 and after all passed to [cross-spawn][cross-spawn], which actually is Node's `spawn`.
 
-* `<cmd>` **{String}**  
-* `[args]` **{Array}**  
-* `[opts]` **{Object}**  
-* `<callback>` **{Function}**  
-* `returns` **{Stream}** actually what `child_process.spawn` returns
+- `<cmd>` **{String}** Command/program to execute. You can pass subcommands, flags and arguments separated with space  
+- `[args]` **{Array}** arguments that will be [arr-union][arr-union] with the given in `cmd`. You can give `opts` object here instead of `args`  
+- `[opts]` **{Object}** pass options to [spawn][child-spawn] and [github-short-url-regex][github-short-url-regex]. You can give `cb` function here instead of `opts`  
+- `<cb>` **{Function}** node-style callback function that will handle
+  + `err` **{Error}** error if exists (`instanceof Error`), or `null`. It have some extra props:
+    - `command` **{String}** the `cmd` plus `args` which was tried to execute
+    - `message` **{String}** some useful message
+    - `buffer` **{Buffer}** representation of the error
+    - `status` **{Number|String}**
+    - `stack` usual ... stack trace
+  + `res` **{String}** representation of response for the executed command/program
+    - _notice_ when `opts.stdio: 'inherit'`, res is empty string `''` 
+    - _notice_ when `err`, it is `undefined`
+  + `code` **{Number|String}** e.g. `0`, `1`, `-2`, `128`, `'ENOENT'`, etc.. Process exit status code of the execution
+  + `buffer` **{Buffer}** buffer equivalent of response, e.g. `<Buffer 74 75 6e 6e...>`
+    - _notice_ when `err`, it is `undefined`
+    - but _notice_ you can find it again in `err.buffer`
+- `returns` **{Stream}** actually what `child_process.spawn` returns
 
 **Example:**
 
@@ -28,16 +41,14 @@ and after all passed to [cross-spawn][cross-spawn], which actually is Node's `sp
 var asyncExecCmd = require('async-exec-cmd');
 var cp = asyncExecCmd('npm install', [
   '--save-dev', 'bluebird'
-], function __cb(err, res) {
-  // res[0] is status code
-  if (err || res[0] > 0) {
-    console.error(err);
+], function __cb(err, res, code, buffer) {
+  if (err) {
+    console.error(err, code);
     return;
   }
 
-  // res[1] is actual result
-  console.log(res[1]);
-};);
+  console.log(res, code, buffer);
+});
 ```
 
 ### Possible signatures (will work)
@@ -46,16 +57,19 @@ var cp = asyncExecCmd('npm install', [
 ```js
 var cmd = require('async-exec-cmd');
 
-function __cb(err, res) {
-  // res[0] is status code
-  if (err || res[0] > 0) {
-    console.error(err);
+function __cb(err, res, code, buffer) {
+  if (err) {
+    console.error(err, code);
     return;
   }
 
-  // res[1] is actual result
-  console.log(res[1]);
+  console.log(res, code, buffer);
 }
+
+/**
+ * Try all these commands separatly or run the tests
+ * they cover all situations
+ */
 
 cmd('npm', __cb);
 //=> res === undefined, err.status === 1, you can: err.buffer.toString('utf8')
@@ -161,3 +175,6 @@ Released under the [`MIT`][license-url] license.
 _Powered and automated by [kdf](https://github.com/tunnckoCore), January 28, 2015_
 
 [cross-spawn]: https://github.com/IndigoUnited/node-cross-spawn
+[child-spawn]: http://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
+[github-short-url-regex]: https://github.com/regexps/github-short-url-regex
+[arr-union]: https://github.com/jonschlinkert/arr-union
