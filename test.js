@@ -15,8 +15,9 @@ describe('async-exec-cmd:', function() {
     describe('"first argument cant be function" when', function() {
       it('only function is given (as first argument)', function(done) {
         function fixture() {
-          cmd(function __cb() {
-            // because the `non empty callback` error
+          cmd(function _cb(err) {
+            /* istanbul ignore next */
+            err = err || '';
           });
         }
         assert.throws(fixture, Error);
@@ -105,6 +106,17 @@ describe('async-exec-cmd:', function() {
   });
 
   describe('should work properly', function() {
+    describe('should return `stream` when asyncExecCmd() is executed', function(done) {
+      it('and should have `.kill` method', function(done) {
+        this.timeout(30000);
+        var cp = cmd('npm help', function _cb(err) {
+          /* istanbul ignore next */
+          err = err || '';
+        });
+        assert.strictEqual(typeof cp.kill, 'function');
+        done();
+      });
+    });
     describe('when opts.stdio is "inherit"', function(done) {
       it('and should recieve res === "", code === 0, err === null', function(done) {
         this.timeout(30000);
