@@ -10,67 +10,214 @@
 var assert = require('assert');
 var cmd = require('./index');
 
-// describe('async-exec-cmd:', function() {
-//   // body ...
-// });
+describe('async-exec-cmd:', function() {
+  describe('should throw', function() {
+    describe('"first argument cant be function" when', function() {
+      it('only function is given (as first argument)', function(done) {
+        function fixture() {
+          cmd(function __cb() {
+            // because the `non empty callback` error
+          });
+        }
+        assert.throws(fixture, Error);
+        done();
+      });
+    });
+    describe('"should have `callback` (non empty callback)" when', function() {
+      it('only object is given (as first argument)', function(done) {
+        function fixture() {
+          cmd({stdio: 'inherit'});
+        }
+        assert.throws(fixture, Error);
+        done();
+      });
+    });
+    describe('"should have `callback` (non empty callback)" when', function() {
+      it('only array is given (as first argument)', function(done) {
+        function fixture() {
+          cmd(['--save', 'bluebird']);
+        }
+        assert.throws(fixture, Error);
+        done();
+      });
+    });
+    describe('"should have `callback` (non empty callback)" when', function() {
+      it('array and object are given', function(done) {
+        function fixture() {
+          cmd(['--save', 'bluebird'], {stdio: 'inherit'});
+        }
+        assert.throws(fixture, Error);
+        done();
+      });
+    });
+    describe('"should have `callback` (non empty callback)" when', function() {
+      it('asyncExecCmd(cmd, function cb(){}) - callback with empty body', function(done) {
+        function fixture() {
+          cmd('npm install --save is-glob', function _cb() {});
+        }
+        assert.throws(fixture, Error);
+        done();
+      });
+    });
+  });
 
-function __cb(err, res) {
-  // res[0] is status code
-  if (err || res[0] > 0) {
-    console.error(err);
-    return;
-  }
+  describe('should callback(err) recieve', function() {
+    describe('from spawn `error` event because', function() {
+      it('the process could not be spawned', function(done) {
+        cmd('jkdshfkj4hkjh435', function _cb(err) {
+          assert(err instanceof Error);
+          done();
+        });
+      });
+    });
+    describe('TypeError "expect `cmd` be string" when', function() {
+      it('object and callback are given', function(done) {
+        cmd({stdio: 'inherit'}, function _cb(err) {
+          assert.throws(err, TypeError);
+          done();
+        });
+      });
+    });
+    describe('TypeError "expect `cmd` be string" when', function() {
+      it('array and callback are given', function(done) {
+        cmd(['--save', 'bluebird'], function _cb(err) {
+          assert.throws(err, TypeError);
+          done();
+        });
+      });
+    });
+    describe('TypeError "expect `cmd` be string" when', function() {
+      it('array, object and callback are given', function(done) {
+        cmd(['--save', 'bluebird'], {stdio: 'inherit'}, function _cb(err) {
+          assert.throws(err, TypeError);
+          done();
+        });
+      });
+    });
+    describe('TypeError "expect `cmd` be string" when', function() {
+      it('object, array and callback are given', function(done) {
+        cmd({stdio: 'inherit'}, ['--save', 'bluebird'], function _cb(err) {
+          assert.throws(err, TypeError);
+          done();
+        });
+      });
+    });
+  });
 
-  // res[1] is actual result
-  console.log('res:', res[1]);
-}
-
-// cmd('npm', __cb);
-//=> res === undefined, err.status === 1, you can: err.buffer.toString('utf8')
-
-// cmd('npm', {stdio: [null, null, null]}, __cb);
-//=> res === undefined, err.status === 1, you can: err.buffer.toString('utf8')
-
-// cmd('npm', ['install', '--save-dev', 'bluebird'], __cb);
-//=> err === undefined, res[0] === 0, res[1] === 'res:'
-
-// cmd('npm', ['uninstall', '--save-dev', 'bluebird'], {stdio: [null, null, null]}, __cb);
-//=> err === undefined, res[0] === 0, res[1] === 'res: bluebird@2.9.3 node_modules/bluebird'
-
-// cmd('npm -v', __cb);
-//=> err === undefined, res[0] === 0, res[1] === 'res: 2.1.16'
-
-// cmd('npm install', ['--save-dev', 'bluebird'], __cb);
-//=> err === undefined, res[0] === 0, res[1] === 'res: bluebird@2.9.3 node_modules/bluebird'
-
-// cmd('npm uninstall', ['--save-dev', 'bluebird'], {stdio: [null, null, null]}, __cb);
-//=> err === undefined, res[0] === 0, res[1] === 'res: unbuild bluebird@2.9.3'
-
-// cmd('npm -v', {stdio: 'inherit'}, __cb);
-//=> will directly outputs: 2.1.16
-//=> err === undefined, res[0] === 0, res[1] === 'res:'
-
-
-// ### Impossible signatures (will throws/errors)
-// > these examples should not work
-
-// cmd(__cb);
-//=> first argument cant be function
-
-// cmd({ok:true});
-//=> should have `callback` (non empty callback)
-
-// cmd(['--save-dev', 'bluebird']);
-//=> should have `callback` (non empty callback)
-
-// cmd(['--save-dev', 'bluebird'], {ok:true});
-//=> should have `callback` (non empty callback)
-
-// cmd({ok:true}, __cb);
-//=> expect `cmd` be string
-
-// cmd(['--save-dev', 'bluebird'], __cb);
-//=> expect `cmd` be string
-
-// cmd(['--save-dev', 'bluebird'], {ok:true}, __cb);
-//=> expect `cmd` be string
+  describe('should work properly', function() {
+    describe('when opts.stdio is "inherit"', function(done) {
+      it('and should recieve res === "", code === 0, err === null', function(done) {
+        this.timeout(30000);
+        cmd('npm install --save is-glob', {stdio: 'inherit'}, function _cb(err, res, code) {
+          assert.strictEqual(err, null);
+          assert.strictEqual(code, 0); // status code
+          assert.strictEqual(typeof res, 'string'); // response
+          assert.strictEqual(res.length, 0);
+          done();
+        });
+      });
+    });
+    describe('when asyncExecCmd(\'npm\', [args[, opts]], cb)', function() {
+      describe('and handle CommandError when', function() {
+        it('asyncExecCmd(\'npm\', cb)', function(done) {
+          this.timeout(30000);
+          cmd('npm', function _cb(err, res, code, buffer) {
+            assert.strictEqual(res, undefined);
+            assert.strictEqual(buffer, undefined);
+            assert.strictEqual(code, 1);
+            assert.strictEqual(err.status, 1);
+            assert.strictEqual(err.name, 'CommandError');
+            done();
+          });
+        });
+        it('asyncExecCmd(\'npm\', opts, cb)', function(done) {
+          this.timeout(30000);
+          cmd('npm', {stdio: [null, null, null]},
+          function _cb(err, res, code, buffer) {
+            assert.strictEqual(res, undefined);
+            assert.strictEqual(buffer, undefined);
+            assert.strictEqual(code, 1);
+            assert.strictEqual(err.status, 1);
+            assert.strictEqual(err.name, 'CommandError');
+            done();
+          });
+        });
+      });
+      describe('and callback error should be `null` and should have response when', function() {
+        it('asyncExecCmd(\'npm\', [\'i\', \'--save\', \'is-glob\'], cb)', function(done) {
+          this.timeout(30000);
+          cmd('npm', ['install', '--save', 'is-glob'],
+          function _cb(err, res, code) {
+            assert.strictEqual(err, null);
+            assert.strictEqual(code, 0);
+            assert.strictEqual(typeof res, 'string');
+            assert(res.length > 0);
+            done();
+          });
+        });
+        it('asyncExecCmd(\'npm\', [\'uni\', \'--save\', \'is-glob\'], opts, cb)', function(done) {
+          this.timeout(30000);
+          cmd('npm', ['uninstall', '--save', 'is-glob'], {stdio: [null, null, null]},
+          function _cb(err, res, code) {
+            assert.strictEqual(err, null);
+            assert.strictEqual(code, 0);
+            assert.strictEqual(typeof res, 'string');
+            assert(res.length > 0);
+            done();
+          });
+        });
+      });
+    });
+    describe('when asyncExecCmd(\'npm subcommdand\', [args[, opts]], cb)', function() {
+      describe('and handle CommandError when', function() {
+        it('asyncExecCmd(\'npm unknown\', cb)', function(done) {
+          this.timeout(30000);
+          cmd('npm unknown', function _cb(err, res, code, buffer) {
+            assert.strictEqual(res, undefined);
+            assert.strictEqual(buffer, undefined);
+            assert.strictEqual(code, 1);
+            assert.strictEqual(err.status, 1);
+            assert.strictEqual(err.name, 'CommandError');
+            done();
+          });
+        });
+        it('asyncExecCmd(\'npm unknown\', opts, cb)', function(done) {
+          this.timeout(30000);
+          cmd('npm unknown', {stdio: [null, null, null]},
+          function _cb(err, res, code, buffer) {
+            assert.strictEqual(res, undefined);
+            assert.strictEqual(buffer, undefined);
+            assert.strictEqual(code, 1);
+            assert.strictEqual(err.status, 1);
+            assert.strictEqual(err.name, 'CommandError');
+            done();
+          });
+        });
+      });
+      describe('and callback error should be `null` and should have response when', function() {
+        it('asyncExecCmd(\'npm i\', [\'--save\', \'is-glob\'], cb)', function(done) {
+          this.timeout(30000);
+          cmd('npm install', ['--save', 'is-glob'],
+          function _cb(err, res, code) {
+            assert.strictEqual(err, null);
+            assert.strictEqual(code, 0);
+            assert.strictEqual(typeof res, 'string');
+            assert(res.length > 0);
+            done();
+          });
+        });
+        it('asyncExecCmd(\'npm uni\', [\'--save\', \'is-glob\'], opts, cb)', function(done) {
+          this.timeout(30000);
+          cmd('npm uninstall', ['--save', 'is-glob'], {stdio: [null, null, null]},
+          function _cb(err, res, code) {
+            assert.strictEqual(err, null);
+            assert.strictEqual(code, 0);
+            assert.strictEqual(typeof res, 'string');
+            assert(res.length > 0);
+            done();
+          });
+        });
+      });
+    });
+  });
+});
