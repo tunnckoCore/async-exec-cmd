@@ -16,9 +16,9 @@ npm test
 > Async execute command via spawn. All arguments are rebuilt, merged, structured, normalized
 and after all passed to [cross-spawn][cross-spawn], which actually is Node's `spawn`.
 
-* `<cmd>` **{String}**  
-* `[args]` **{Array}**  
-* `[opts]` **{Object}**  
+* `<cmd>` **{String}** Command/program to execute. You can pass subcommands, flags and arguments separated with space  
+* `[args]` **{Array}** command/program arguments that will be merged with given in `cmd`  
+* `[opts]` **{Object}** pass options to [spawn][cross-spawn] and [github-short-url-regex][github-short-url-regex]  
 * `<callback>` **{Function}**  
 * `returns` **{Stream}** actually what `child_process.spawn` returns
 
@@ -161,3 +161,4 @@ Released under the [`MIT`][license-url] license.
 _Powered and automated by [kdf](https://github.com/tunnckoCore), January 28, 2015_
 
 [cross-spawn]: https://github.com/IndigoUnited/node-cross-spawn
+[github-short-url-regex]: https://github.com/regexps/github-short-url-regex
