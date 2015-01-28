@@ -168,7 +168,8 @@ function CommandError(err) {
   this.stack = err.stack,
   this.buffer = err.buffer,
   this.status = err.status
+  Error.captureStackTrace(this, CommandError);
 }
 
-CommandError.prototype = new Error();
+CommandError.prototype = Object.create(Error.prototype);
 CommandError.prototype.constructor = CommandError;
