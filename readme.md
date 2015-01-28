@@ -26,7 +26,7 @@ and after all passed to [cross-spawn][cross-spawn], which actually is Node's `sp
     - `buffer` **{Buffer}** representation of the error
     - `status` **{Number|String}**
     - `stack` usual ... stack trace
-  + `res` **{String}** string representation of response for the executed command/program
+  + `res` **{String}** representation of response for the executed command/program
     - _notice_ when `opts.stdio: 'inherit'`, res is empty string `''` 
     - _notice_ when `err`, it is `undefined`
   + `code` **{Number|String}** e.g. `0`, `1`, `-2`, `128`, `'ENOENT'`, etc.. Process exit status code of the execution
