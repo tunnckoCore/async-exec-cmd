@@ -18,12 +18,12 @@ and after all passed to [cross-spawn][cross-spawn], which actually is Node's `sp
 
 - `<cmd>` **{String}** Command/program to execute. You can pass subcommands, flags and arguments separated with space  
 - `[args]` **{Array}** arguments that will be [arr-union][arr-union] with the given in `cmd`. You can give `opts` object here instead of `args`  
-- `[opts]` **{Object}** pass options to [spawn][cross-spawn] and [github-short-url-regex][github-short-url-regex]. You can give `cb` function here instead of `opts`  
+- `[opts]` **{Object}** pass options to [spawn][child-spawn] and [github-short-url-regex][github-short-url-regex]. You can give `cb` function here instead of `opts`  
 - `<cb>` **{Function}** node-style callback function that will handle
   + `err` **{Error}** error if exists (`instanceof Error`), or `null`
   + `res` **{String}** string representation of response for the executed command/program
     - when `opts.stdio: 'inherit'` (which is set by default) is `''` 
-  + `code` **{Number|String}** e.g. `0`, `1`, `-2`, `128`, `ENOENT`, etc.. Process status (close/exit) code of the execution
+  + `code` **{Number|String}** e.g. `0`, `1`, `-2`, `128`, `'ENOENT'`, etc.. Process exit status code of the execution
   + `buffer` **{Buffer}** buffer equivalent of response
 - `returns` **{Stream}** actually what `child_process.spawn` returns
 
@@ -166,5 +166,6 @@ Released under the [`MIT`][license-url] license.
 _Powered and automated by [kdf](https://github.com/tunnckoCore), January 28, 2015_
 
 [cross-spawn]: https://github.com/IndigoUnited/node-cross-spawn
+[child-spawn]: http://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
 [github-short-url-regex]: https://github.com/regexps/github-short-url-regex
 [arr-union]: https://github.com/jonschlinkert/arr-union
