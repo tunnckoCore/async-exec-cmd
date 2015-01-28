@@ -22,8 +22,8 @@ and after all passed to [cross-spawn][cross-spawn], which actually is Node's `sp
 - `<cb>` **{Function}** node-style callback function that will handle
   + `err` **{Error}** error if exists (`instanceof Error`), or `null`
   + `res` **{String}** string representation of response for the executed command/program
-    - if `opts.stdio: [null, null, null]` or `''`
-  + `code` **{Number|String}** process status code of the execution, e.g. `1`, `-2`, `128`, `ENOENT`, etc..
+    - when `opts.stdio: 'inherit'` (which is set by default) is `''` 
+  + `code` **{Number|String}** e.g. `0`, `1`, `-2`, `128`, `ENOENT`, etc.. Process status (close/exit) code of the execution
   + `buffer` **{Buffer}** buffer equivalent of response
 - `returns` **{Stream}** actually what `child_process.spawn` returns
 
