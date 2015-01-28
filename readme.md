@@ -162,3 +162,4 @@ _Powered and automated by [kdf](https://github.com/tunnckoCore), January 28, 201
 
 [cross-spawn]: https://github.com/IndigoUnited/node-cross-spawn
 [github-short-url-regex]: https://github.com/regexps/github-short-url-regex
+[arr-union]: https://github.com/jonschlinkert/arr-union
