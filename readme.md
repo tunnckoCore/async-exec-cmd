@@ -24,7 +24,7 @@ and after all passed to [cross-spawn][cross-spawn], which actually is Node's `sp
   + `res` **{String}** string representation of response for the executed command/program
     - _notice_ when `opts.stdio: 'inherit'`, res is empty string `''` 
   + `code` **{Number|String}** e.g. `0`, `1`, `-2`, `128`, `'ENOENT'`, etc.. Process exit status code of the execution
-  + `buffer` **{Buffer}** buffer equivalent of response
+  + `buffer` **{Buffer}** buffer equivalent of response, e.g. `<Buffer 74 75 6e 6e...>`
 - `returns` **{Stream}** actually what `child_process.spawn` returns
 
 **Example:**
