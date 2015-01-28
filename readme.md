@@ -20,11 +20,19 @@ and after all passed to [cross-spawn][cross-spawn], which actually is Node's `sp
 - `[args]` **{Array}** arguments that will be [arr-union][arr-union] with the given in `cmd`. You can give `opts` object here instead of `args`  
 - `[opts]` **{Object}** pass options to [spawn][child-spawn] and [github-short-url-regex][github-short-url-regex]. You can give `cb` function here instead of `opts`  
 - `<cb>` **{Function}** node-style callback function that will handle
-  + `err` **{Error}** error if exists (`instanceof Error`), or `null`
+  + `err` **{Error}** error if exists (`instanceof Error`), or `null`. It have some extra props:
+    - `command` **{String}** the `cmd` plus `args` which was tried to execute
+    - `message` **{String}** some useful message
+    - `buffer` **{Buffer}** representation of the error
+    - `status` **{Number|String}**
+    - `stack` usual ... stack trace
   + `res` **{String}** string representation of response for the executed command/program
     - _notice_ when `opts.stdio: 'inherit'`, res is empty string `''` 
+    - _notice_ when `err`, it is `undefined`
   + `code` **{Number|String}** e.g. `0`, `1`, `-2`, `128`, `'ENOENT'`, etc.. Process exit status code of the execution
   + `buffer` **{Buffer}** buffer equivalent of response, e.g. `<Buffer 74 75 6e 6e...>`
+    - _notice_ when `err`, it is `undefined`
+    - but _notice_ you can find it again in `err.buffer`
 - `returns` **{Stream}** actually what `child_process.spawn` returns
 
 **Example:**
@@ -33,15 +41,13 @@ and after all passed to [cross-spawn][cross-spawn], which actually is Node's `sp
 var asyncExecCmd = require('async-exec-cmd');
 var cp = asyncExecCmd('npm install', [
   '--save-dev', 'bluebird'
-], function __cb(err, res) {
-  // res[0] is status code
-  if (err || res[0] > 0) {
-    console.error(err);
+], function __cb(err, res, code, buffer) {
+  if (err) {
+    console.error(err, code);
     return;
   }
 
-  // res[1] is actual result
-  console.log(res[1]);
+  console.log(res, code, buffer);
 };);
 ```
 
