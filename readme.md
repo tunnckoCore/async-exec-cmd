@@ -48,7 +48,7 @@ var cp = asyncExecCmd('npm install', [
   }
 
   console.log(res, code, buffer);
-};);
+});
 ```
 
 ### Possible signatures (will work)
@@ -57,16 +57,19 @@ var cp = asyncExecCmd('npm install', [
 ```js
 var cmd = require('async-exec-cmd');
 
-function __cb(err, res) {
-  // res[0] is status code
-  if (err || res[0] > 0) {
-    console.error(err);
+function __cb(err, res, code, buffer) {
+  if (err) {
+    console.error(err, code);
     return;
   }
 
-  // res[1] is actual result
-  console.log(res[1]);
+  console.log(res, code, buffer);
 }
+
+/**
+ * Try all these commands separatly or run the tests
+ * they cover all situations
+ */
 
 cmd('npm', __cb);
 //=> res === undefined, err.status === 1, you can: err.buffer.toString('utf8')
