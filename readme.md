@@ -17,7 +17,7 @@ npm test
 and after all passed to [cross-spawn][cross-spawn], which actually is Node's `spawn`.
 
 * `<cmd>` **{String}** Command/program to execute. You can pass subcommands, flags and arguments separated with space  
-* `[args]` **{Array}** command/program arguments that will be merged with given in `cmd`  
+* `[args]` **{Array}** arguments that will be [arr-union][arr-union] with the given in `cmd`. You can give `opts` object here instead of `args`.  
 * `[opts]` **{Object}** pass options to [spawn][cross-spawn] and [github-short-url-regex][github-short-url-regex]  
 * `<callback>` **{Function}**  
 * `returns` **{Stream}** actually what `child_process.spawn` returns
