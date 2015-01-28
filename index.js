@@ -43,9 +43,13 @@ var type = handleErrors.type;
 module.exports = function asyncExecCmd() {
   var argz = handleArguments(arguments);
   argz = checkArguments(argz);
-  argz = buildArguments(argz);
 
-  return buildSpawn(argz.cmd, argz.args, argz.opts, argz.callback);
+  if (argz) {
+    argz = buildArguments(argz);
+    return buildSpawn(argz.cmd, argz.args, argz.opts, argz.callback);
+  }
+
+  return;
 };
 
 /**
@@ -60,7 +64,7 @@ function checkArguments(argz) {
     return error('first argument cant be function');
   }
 
-  if (isEmptyFunction(argz.cb)) {
+  if (isEmptyFunction(argz.cb.toString())) {
     return error('should have `callback` (non empty callback)');
   }
 
@@ -112,6 +116,9 @@ function buildArguments(argz) {
 function buildSpawn(cmd, args, opts, callback) {
   var proc = spawn(cmd, args, opts);
   var buffer = new Buffer('');
+  var cmdError = {};
+
+  cmd = cmd + ' ' + args.join(' ');
 
   if (proc.stdout) {
     proc.stdout.on('data', function indexOnData(data) {
@@ -119,38 +126,31 @@ function buildSpawn(cmd, args, opts, callback) {
     });
   }
 
-  proc.on('error', function indexOnError(err) {
-    if (err instanceof Error) {
-      callback(new CommandError({
-        command: cmd + args.join(' '),
-        message: err.message,
-        stack: err.stack,
-        buffer: buffer,
-        status: 1
-      }));
+  proc
+  .on('error', function spawnOnError(err) {
+    cmdError = new CommandError({
+      command: cmd,
+      message: err.message ? err.message : undefined,
+      stack: err.stack ? err.stack : undefined,
+      buffer: buffer ? buffer : undefined,
+      status: err.status ? err.status : 1
+    });
+  })
+  .on('close', function spawnOnClose(code) {
+    if (code === 0) {
+      callback(null, buffer.toString().trim(), code, buffer);
       return;
     }
-    callback(new CommandError({
-      command: cmd + args.join(' '),
-      buffer: buffer,
-      status: 1
-    }));
-    //process.exit(1);
-  });
 
-  proc.on('close', function indexOnClose(code) {
-    if (!code) {
-      callback(null, [code, buffer.toString().trim()]);
-      //process.exit(0);
-      return;
-    }
-    callback(new CommandError({
-      command: cmd + args.join(' '),
-      buffer: buffer,
-      status: code
-    }));
-    //process.exit(code);
-  });
+    cmdError = new CommandError({
+      command: cmd,
+      message: cmdError.message ? cmdError.message : undefined,
+      stack: cmdError.stack ? cmdError.stack : undefined,
+      buffer: cmdError.buffer ? cmdError.buffer : buffer,
+      status: cmdError.status ? cmdError.status : code
+    });
+    callback(cmdError, undefined, code, undefined);
+  })
 
   return proc;
 }
@@ -161,13 +161,13 @@ function buildSpawn(cmd, args, opts, callback) {
  * @param {Object} `opts`
  * @api private
  */
-function CommandError(opts) {
+function CommandError(err) {
   this.name = 'CommandError';
-  this.command = opts.command;
-  this.message = opts.message;
-  this.status = opts.status;
-  this.buffer = opts.buffer;
-  this.stack = opts.stack;
+  this.command = err.command,
+  this.message = err.message,
+  this.stack = err.stack,
+  this.buffer = err.buffer,
+  this.status = err.status
 }
 
 CommandError.prototype = new Error();
