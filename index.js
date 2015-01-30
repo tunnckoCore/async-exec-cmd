@@ -158,16 +158,16 @@ function buildSpawn(cmd, args, opts, callback) {
 /**
  * > Construct `CommandError`.
  *
- * @param {Object} `opts`
+ * @param {Object} `err`
  * @api private
  */
 function CommandError(err) {
   this.name = 'CommandError';
-  this.command = err.command,
-  this.message = err.message,
-  this.stack = err.stack,
-  this.buffer = err.buffer,
-  this.status = err.status
+  this.command = err.command;
+  this.message = err.message;
+  this.stack = err.stack;
+  this.buffer = err.buffer;
+  this.status = err.status;
   Error.captureStackTrace(this, CommandError);
 }
 
