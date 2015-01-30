@@ -3,7 +3,7 @@
 > Simple, fast, flexible and cross-platform async executing commands (with [node-cross-spawn][cross-spawn])
 
 ## Install
-```bash
+```
 npm i --save async-exec-cmd
 npm test
 ```
@@ -72,38 +72,29 @@ function __cb(err, res, code, buffer) {
  */
 
 cmd('npm', __cb);
-//=> res === undefined, err.status === 1, you can: err.buffer.toString('utf8')
+//=> res and buffer are undefined
 
 cmd('npm', {stdio: [null, null, null]}, __cb);
-//=> res === undefined, err.status === 1, you can: err.buffer.toString('utf8')
+//=> err Error object, res and buffer are undefined, 
 
-cmd('npm', ['install', '--save-dev', 'bluebird'], __cb);
-//=> err === undefined, res[0] === 0, res[1] === 'res:'
+cmd('npm', ['install', '--save', 'bluebird'], __cb);
+//=> err undefined, code 0, res === 'unbuild bluebird@2.9.3'
 
-cmd('npm', ['uninstall', '--save-dev', 'bluebird'], {stdio: [null, null, null]}, __cb);
-//=> err === undefined, res[0] === 0, res[1] === 'res: unbuild bluebird@2.9.3'
+cmd('npm', ['uninstall', '--save', 'bluebird'], {stdio: [null, null, null]}, __cb);
+//=> err undefined, code 0, res === 'unbuild bluebird@2.9.3'
 
 cmd('npm -v', __cb);
-//=> err === undefined, res[0] === 0, res[1] === 'res: 2.1.16'
+//=> err undefined, code 0, res === '2.1.16'
 
-cmd('npm install', ['--save-dev', 'bluebird'], __cb);
-//=> err === undefined, res[0] === 0, res[1] === 'res: bluebird@2.9.3 node_modules/bluebird'
+cmd('npm install', ['--save', 'bluebird'], __cb);
+//=> err undefined, code 0, res === 'bluebird@2.9.3 node_modules/bluebird'
 
-cmd('npm uninstall', ['--save-dev', 'bluebird'], {stdio: [null, null, null]}, __cb);
-//=> err === undefined, res[0] === 0, res[1] === 'res: unbuild bluebird@2.9.3'
+cmd('npm uninstall', ['--save', 'bluebird'], {stdio: [null, null, null]}, __cb);
+//=> err  undefined, code 0, res === 'unbuild bluebird@2.9.3'
 
 cmd('npm -v', {stdio: 'inherit'}, __cb);
 //=> will directly outputs: 2.1.16
-//=> err === undefined, res[0] === 0, res[1] === 'res:'
-
-cmd('npm', __cb);
-cmd('npm', {someFake: 'options'}, __cb);
-cmd('npm', ['install', '--save-dev', 'bluebird'], __cb);
-cmd('npm', ['install', '--save-dev', 'bluebird'], {stdio: [null, null, null]}, __cb);
-cmd('npm -v', __cb)
-cmd('npm install', ['--save-dev', 'bluebird'], __cb);
-cmd('npm install', ['--save-dev', 'bluebird'], {stdio: [null, null, null]}, __cb);
-cmd('npm -v', {stdio: [null, null, null]}, __cb);
+//=> err undefined, code 0, res === ''
 ```
 
 ### Impossible signatures (will throws/errors)
@@ -172,7 +163,7 @@ Released under the [`MIT`][license-url] license.
 
 ***
 
-_Powered and automated by [kdf](https://github.com/tunnckoCore), January 28, 2015_
+_Powered and automated by [kdf](https://github.com/tunnckoCore), January 30, 2015_
 
 [cross-spawn]: https://github.com/IndigoUnited/node-cross-spawn
 [child-spawn]: http://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
