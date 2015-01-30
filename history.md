@@ -1,6 +1,18 @@
 
 
+## v2.0.0 / January 30, 2015
+- Release v2.0.0 / npm@v2.0.0
+- fix deps version ranges
+- fix examples
+- rebuild readme, add docs
+- update `CommandError` - correct inheritance
+- add test: is returned when executed is stream
+- bump dependencies
+- add tests (close #1)
+- refactor `buildSpawn` - responsible for order of arguments and etc...
+
 ## v1.0.0 / January 27, 2015
+- Release v1.0.0 / npm@v1.0.0
 - update test cases, need implement
 - cleanup, update example
 - update docs
