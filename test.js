@@ -66,7 +66,7 @@ describe('async-exec-cmd:', function() {
     describe('from spawn `error` event because', function() {
       it('the process could not be spawned', function(done) {
         cmd('jkdshfkj4hkjh435', function _cb(err) {
-          assert(err instanceof Error);
+          assert.ok(err instanceof Error);
           done();
         });
       });
@@ -74,7 +74,7 @@ describe('async-exec-cmd:', function() {
     describe('TypeError "expect `cmd` be string" when', function() {
       it('object and callback are given', function(done) {
         cmd({stdio: 'inherit'}, function _cb(err) {
-          assert.throws(err, TypeError);
+          assert.ok(err instanceof TypeError);
           done();
         });
       });
@@ -82,7 +82,7 @@ describe('async-exec-cmd:', function() {
     describe('TypeError "expect `cmd` be string" when', function() {
       it('array and callback are given', function(done) {
         cmd(['--save', 'bluebird'], function _cb(err) {
-          assert.throws(err, TypeError);
+          assert.ok(err instanceof TypeError);
           done();
         });
       });
@@ -90,7 +90,7 @@ describe('async-exec-cmd:', function() {
     describe('TypeError "expect `cmd` be string" when', function() {
       it('array, object and callback are given', function(done) {
         cmd(['--save', 'bluebird'], {stdio: 'inherit'}, function _cb(err) {
-          assert.throws(err, TypeError);
+          assert.ok(err instanceof TypeError);
           done();
         });
       });
@@ -98,7 +98,7 @@ describe('async-exec-cmd:', function() {
     describe('TypeError "expect `cmd` be string" when', function() {
       it('object, array and callback are given', function(done) {
         cmd({stdio: 'inherit'}, ['--save', 'bluebird'], function _cb(err) {
-          assert.throws(err, TypeError);
+          assert.ok(err instanceof TypeError);
           done();
         });
       });
