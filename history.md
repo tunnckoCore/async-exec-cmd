@@ -1,5 +1,10 @@
 
 
+## v2.0.1 / February 9, 2015
+- Release v2.0.1 / npm@v2.0.1
+- fix tests
+- faster travis and iojs + v0.12 support
+
 ## v2.0.0 / January 30, 2015
 - Release v2.0.0 / npm@v2.0.0
 - fix deps version ranges
