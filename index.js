@@ -95,7 +95,7 @@ function checkArguments (argz) {
 function buildArguments (argz) {
   var args = argz.cmd.split(' ')
   argz.cmd = args.shift()
-  argz.args = union([], argz.args || [], args || [])
+  argz.args = union([], args || [], argz.args || [])
   return argz
 }
 

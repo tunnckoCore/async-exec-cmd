@@ -41,12 +41,12 @@
     "url": "https://github.com/tunnckoCore/async-exec-cmd/blob/master/LICENSE.md"
   },
   "dependencies": {
-    "arr-union": "~2.0.0",
-    "cross-spawn": "~0.2.3",
-    "handle-arguments": "~2.0.0",
+    "arr-union": "~2.0.1",
+    "cross-spawn": "~0.4.0",
+    "handle-arguments": "~3.0.1",
     "handle-errors": "~1.0.0",
-    "is-empty-function": "~1.0.3",
-    "kind-of": "~1.0.0"
+    "is-empty-function": "~1.0.7",
+    "kind-of": "~1.1.0"
   },
   "devDependencies": {
     "assertit": "^0.1.0"
