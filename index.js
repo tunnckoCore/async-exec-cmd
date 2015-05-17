@@ -27,10 +27,16 @@ var type = handleErrors.type
  *
  * ```js
  * var asyncExecCmd = require('async-exec-cmd')
- * var promise = asyncExecCmd('echo', [
- *   'hello world'
- * ], function __cb(err, res) {
- *   // as usual
+ *
+ * var child = asyncExecCmd('npm install', [
+ *   '--save-dev', 'bluebird'
+ * ], function __cb (err, res, code, buffer) {
+ *   if (err) {
+ *     console.error(err, code)
+ *     return
+ *   }
+ *
+ *   console.log(res, code, buffer)
  * })
  * ```
  *
