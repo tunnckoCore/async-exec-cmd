@@ -1,11 +1,11 @@
 
 
-## v2.0.1 / February 9, 2015
+## 2.0.1 - 2015-02-09
 - Release v2.0.1 / npm@v2.0.1
 - fix tests
 - faster travis and iojs + v0.12 support
 
-## v2.0.0 / January 30, 2015
+## 2.0.0 - 2015-01-30
 - Release v2.0.0 / npm@v2.0.0
 - fix deps version ranges
 - fix examples
@@ -16,7 +16,7 @@
 - add tests (close #1)
 - refactor `buildSpawn` - responsible for order of arguments and etc...
 
-## v1.0.0 / January 27, 2015
+## 1.0.0 - 2015-01-27
 - Release v1.0.0 / npm@v1.0.0
 - update test cases, need implement
 - cleanup, update example
@@ -25,9 +25,9 @@
 - update, rebuild
 - refactor
 
-## v0.0.2 / January 25, 2015
+## 0.0.2 - 2015-01-25
 - Release v0.0.2 / npm@v0.0.2
 - add check for `args` be array
 
-## v0.0.1 / January 22, 2015
-- init commits
+## 0.0.1 - 2015-01-22
+- first commits
