@@ -1,5 +1,13 @@
 
 
+## 2.0.2 - 2015-05-17
+- Release v2.0.2 / npm@v2.0.2
+- update readme/docs
+- rewrite tests - was too complex, reported by codeclimate
+- jshint tweak for codeclimate
+- bump deps, args order, because arr-union@v2.0.1
+- update - repo template, code style and etc
+
 ## 2.0.1 - 2015-02-09
 - Release v2.0.1 / npm@v2.0.1
 - fix tests
